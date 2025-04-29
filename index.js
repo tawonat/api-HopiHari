@@ -4,6 +4,8 @@ const cors = require("cors");
 const helmet = require("helmet");
 const bodyParser = require("body-parser");
 
+const usuariosRoute = require("./routes/usuarios.route");
+
 app.use(cors());
 app.use(helmet());
 
@@ -20,6 +22,6 @@ app.use((req, res, next) =>{
     next();
 });
 
-app.use('/usuarios', usuariosRoute);
+app.use('/usuarios', usuariosRoute); //define a url utilizada
 
 module.exports = app;
