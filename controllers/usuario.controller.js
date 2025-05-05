@@ -9,8 +9,8 @@ exports.cadastrarUsuario = async (req, res) => {
 const hashedPassword = await bcrypt.hash(req.body.password, 10); //faz o hash da senha
 
         const resultado = await mysql.execute(
-            `INSERT INTO users (name, email, password) VALUES (?, ?, ?);`,
-            [req.body.name,req.body.email,hashedPassword] //aqui já coloca a senha com hash
+            `INSERT INTO users (first_name, last_name, email, password, birth_date) VALUES (?, ?, ?, ?, ?);`,
+            [req.body.first_name,req.body.last_name,req.body.email,hashedPassword,req.body.birth_date] //aqui já coloca a senha com hash
         );
         return res.status(201).send({"Mensagem": "Usuário cadastrado com sucesso!", "Resultado": resultado});
     } catch (error) {
@@ -47,8 +47,8 @@ exports.atualizarUsuario = async (req, res) => {
         const idUsuario = Number(req.params.id);
 
         const resultado = await mysql.execute(
-            `UPDATE users SET name = ?, email = ?, password = ? WHERE id = ?;`,
-            [req.body.name,req.body.email,req.body.password,idUsuario]
+            `UPDATE users SET first_name = ?, last_name = ?, email = ?, password = ?, birth_date = ? WHERE id = ?;`,
+            [req.body.first_name,req.body.last_name,req.body.email,req.body.password,req.body.birth_date,idUsuario]
         );
         return res.status(201).send({"Mensagem": "Usuário atualizado com sucesso!", "Resultado": resultado});
     } catch (error) {
@@ -59,13 +59,18 @@ exports.atualizarUsuario = async (req, res) => {
 //rota DELETE deletar o usuário
 exports.deletarUsuario = async (req, res) => {
     const idUsuario = Number(req.params.id);
-    try{
+    try {
         const resultado = await mysql.execute(
             `DELETE FROM users WHERE id = ?;`,
             [idUsuario]
         );
-        return res.status(201).send({"Mensagem": "Usuário deletado com sucesso!", "Resultado": resultado});
+
+        if (resultado.affectedRows === 0) {
+            return res.status(404).send({"Mensagem": "Usuário não encontrado!"});
+        }
+
+        return res.status(200).send({"Mensagem": "Usuário deletado com sucesso!", "Resultado": resultado});
     } catch (error) {
         return res.status(500).send({"Mensagem": error});
     }
-}
+};
