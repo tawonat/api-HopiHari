@@ -2,7 +2,7 @@ const mysql = require('../mysql'); //biblioteca pro JS ler mysql
 const bcrypt = require('bcrypt'); //biblioteca pro JS fazer hash da senha
 const jwt = require('jsonwebtoken'); //biblioteca pro JS fazer o token de autenticação 
 
-const JWT_SECRET = "SenhaMaluca"; //chave secreta do JWT, aqui só pra teste, depois tem que colocar no .env
+const JWT_SECRET = "SenhaMalucaProJWTvouFazerElaComplexa"; //chave secreta do JWT, aqui só pra teste, depois tem que colocar no .env
 
 //rota pra POST cadastrar o usuário
 //aqui não precisa do id, pois o id é auto increment
@@ -12,8 +12,8 @@ exports.cadastrarUsuario = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10); //faz o hash da senha
 
         const resultado = await mysql.execute(
-            `INSERT INTO users (first_name, last_name, email, password, birth_date) VALUES (?, ?, ?, ?, ?);`,
-            [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.birth_date] //aqui já coloca a senha com hash
+            `INSERT INTO users (first_name, last_name, email, password, birth_date, phone) VALUES (?, ?, ?, ?, ?, ?);`,
+            [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.birth_date, req.body.phone] //aqui já coloca a senha com hash
         );
 
         //gerar token JWT
@@ -44,12 +44,14 @@ exports.loginUsuario = async (req, res) => {
 
         //ROTA PRA CRIPTOGRAFIA JWT
         const token = jwt.sign({
-            id: usuario[0].id,
+            id: resultado[0].id,
             first_name: resultado[0].first_name,
             last_name: resultado[0].last_name,
             email: resultado[0].email,
-            birth_date: resultado[0].birth_date
-        }, "senhadojwt")
+            birth_date: resultado[0].birth_date,
+            phone: resultado[0].phone
+        }, JWT_SECRET);
+
         return res.status(200).send({
             "Mensagem": "Usuário logado com sucesso!",
             "token": token,
@@ -66,8 +68,8 @@ exports.atualizarUsuario = async (req, res) => {
         const idUsuario = Number(req.params.id);
 
         const resultado = await mysql.execute(
-            `UPDATE users SET first_name = ?, last_name = ?, email = ?, password = ?, birth_date = ? WHERE id = ?;`,
-            [req.body.first_name, req.body.last_name, req.body.email, req.body.password, req.body.birth_date, idUsuario]
+            `UPDATE users SET first_name = ?, last_name = ?, email = ?, password = ?, birth_date = ?, phone = ? WHERE id = ?;`,
+            [req.body.first_name, req.body.last_name, req.body.email, req.body.password, req.body.birth_date, req.body.phone, idUsuario]
         );
         return res.status(201).send({ "Mensagem": "Usuário atualizado com sucesso!", "Resultado": resultado });
     } catch (error) {
@@ -93,3 +95,5 @@ exports.deletarUsuario = async (req, res) => {
         return res.status(500).send({ "Mensagem": error });
     }
 };
+
+exports.JWT_SECRET = JWT_SECRET;
