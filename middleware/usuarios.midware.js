@@ -15,7 +15,7 @@ exports.required = async (req, res, next) => {
         }
 
     } catch(error) {
-        return res.status(500).send({"error": error});
+        return res.status(500).send({"Mensagem": error});
     }
 
 }

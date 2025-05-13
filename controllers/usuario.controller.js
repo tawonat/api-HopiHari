@@ -8,20 +8,35 @@ const JWT_SECRET = "SenhaMalucaProJWTvouFazerElaComplexa"; //chave secreta do JW
 //aqui não precisa do id, pois o id é auto increment
 exports.cadastrarUsuario = async (req, res) => {
     try {
-
-        const hashedPassword = await bcrypt.hash(req.body.password, 10); //faz o hash da senha
+        const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const resultado = await mysql.execute(
-            `INSERT INTO users (first_name, last_name, email, password, birth_date, phone) VALUES (?, ?, ?, ?, ?, ?);`,
-            [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.birth_date, req.body.phone] //aqui já coloca a senha com hash
+            `INSERT INTO users (first_name, last_name, email, password, birth_date, phone) 
+             VALUES (?, ?, ?, ?, ?, ?);`,
+            [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.birth_date, req.body.phone]
         );
 
-        //gerar token JWT
-        const token = jwt.sign({id: resultado.insertId, email}, JWT_SECRET, {expiresIn: "1h"}); //aqui gera o token com o id do usuário e a senha secreta, e define que o token vai expirar em 1 hora
+        // Fix: Add email reference and error checking
+        const token = jwt.sign(
+            { 
+                id: resultado.insertId, 
+                email: req.body.email 
+            }, 
+            JWT_SECRET,
+            { expiresIn: '1h' } // tempo pro token expirar
+        );
        
-        return res.status(201).send({ "Mensagem": "Usuário cadastrado com sucesso!", "Resultado": resultado });
+        return res.status(201).send({ 
+            "Mensagem": "Usuário cadastrado com sucesso!", 
+            "token": token,
+            "userId": resultado.insertId 
+        });
     } catch (error) {
-        return res.status(500).send({ "Mensagem": error });
+        console.error('Erro ao cadastrar:', error);
+        return res.status(500).send({
+            "Mensagem": "Erro ao cadastrar usuário",
+            "error": error.message
+        });
     }
 }
 
@@ -57,7 +72,7 @@ exports.loginUsuario = async (req, res) => {
             "token": token,
         });
     } catch (error) {
-        return res.status(500).send({ "Mensagem": error });
+        return res.status(500).send({"Mensagem": error});
     }
 }
 
@@ -73,7 +88,7 @@ exports.atualizarUsuario = async (req, res) => {
         );
         return res.status(201).send({ "Mensagem": "Usuário atualizado com sucesso!", "Resultado": resultado });
     } catch (error) {
-        return res.status(500).send({ "Mensagem": error });
+        return res.status(500).send({"Mensagem": error});
     }
 }
 
@@ -92,7 +107,7 @@ exports.deletarUsuario = async (req, res) => {
 
         return res.status(200).send({ "Mensagem": "Usuário deletado com sucesso!", "Resultado": resultado });
     } catch (error) {
-        return res.status(500).send({ "Mensagem": error });
+        return res.status(500).send({"Mensagem": error});
     }
 };
 
