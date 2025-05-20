@@ -64,7 +64,8 @@ exports.loginUsuario = async (req, res) => {
             last_name: resultado[0].last_name,
             email: resultado[0].email,
             birth_date: resultado[0].birth_date,
-            phone: resultado[0].phone
+            phone: resultado[0].phone,
+            admin: resultado[0].admin
         }, JWT_SECRET);
 
         return res.status(200).send({
