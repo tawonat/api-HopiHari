@@ -71,6 +71,13 @@ exports.loginUsuario = async (req, res) => {
         return res.status(200).send({
             "Mensagem": "Usuário logado com sucesso!",
             "token": token,
+            "user": {
+            "first_name": resultado[0].first_name,
+            "last_name": resultado[0].last_name,
+            "email": resultado[0].email,
+            "birth_date": resultado[0].birth_date,
+            "phone": resultado[0].phone
+            }
         });
     } catch (error) {
         return res.status(500).send({"Mensagem": error});
