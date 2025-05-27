@@ -11,9 +11,9 @@ exports.cadastrarUsuario = async (req, res) => {
         const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
         const resultado = await mysql.execute(
-            `INSERT INTO users (first_name, last_name, email, password, birth_date, phone) 
-             VALUES (?, ?, ?, ?, ?, ?);`,
-            [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.birth_date, req.body.phone]
+            `INSERT INTO users (first_name, last_name, email, password, birth_date, phone, admin) 
+             VALUES (?, ?, ?, ?, ?, ?, ?);`,
+            [req.body.first_name, req.body.last_name, req.body.email, hashedPassword, req.body.birth_date, req.body.phone, req.body.admin || false] // se admin não for passado, assume false
         );
 
         // Fix: Add email reference and error checking

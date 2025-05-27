@@ -1,7 +1,7 @@
-INSERT INTO `hopi_hari_db`.`users` (`first_name`, `last_name`, `email`, `password`, `birth_date`, `phone`) VALUES
-('João', 'Silva', 'joao.silva@example.com', 'senha123', '1990-05-15', '11999999999'),
-('Maria', 'Oliveira', 'maria.oliveira@example.com', 'senha456', '1985-10-20', '11988888888'),
-('Carlos', 'Santos', 'carlos.santos@example.com', 'senha789', '1995-03-10', NULL);
+INSERT INTO `hopi_hari_db`.`users` (`first_name`, `last_name`, `email`, `password`, `birth_date`, `phone`, `admin`) VALUES
+('João', 'Silva', 'joao.silva@example.com', 'senha123', '1990-05-15', '11999999999', 0),
+('Maria', 'Oliveira', 'maria.oliveira@example.com', 'senha456', '1985-10-20', '11988888888', 0),
+('Carlos', 'Santos', 'carlos.santos@example.com', 'senha789', '1995-03-10', NULL, 0);
 
 INSERT INTO `hopi_hari_db`.`notifications` (`description`, `id_rides`, `id_user`, `status`) VALUES
 ('A Montanha Russa está com tempo de espera reduzido!', 1, 1, 1),
@@ -12,7 +12,9 @@ INSERT INTO `hopi_hari_db`.`lines` (`users_id`, `atracoes_id`) VALUES
 (1, 1), -- João entrou na fila da Montanha Russa
 (1, 2), -- João entrou na fila da Roda Gigante
 (2, 3), -- Maria entrou na fila da Casa do Terror
-(3, 4); -- Carlos entrou na fila do Carrossel
+(2, 57); -- Carlos entrou na fila do Carrossel
+(3, 86);
+(3, 66);
 
 ALTER TABLE `hopi_hari_db`.`notifications`
 MODIFY COLUMN `description` VARCHAR(255); -- Adjust the length as needed
@@ -59,25 +61,6 @@ JOIN
     hopi_hari_db.atracoes a ON l.atracoes_id = a.id
 JOIN 
     hopi_hari_db.users u ON l.users_id = u.id
-
-
-INSERT INTO `hopi_hari_db`.`lines` (`users_id`, `atracoes_id`) VALUES
-(6, 7), -- João entrou na fila da Montanha Russa
-(6, 9), -- João entrou na fila da Roda Gigante
-(7, 7), -- Maria entrou na fila da Casa do Terror
-(7, 9), -- Carlos entrou na fila do Carrossel
-(8, 6), -- Maria entrou na fila da Casa do Terror
-(8, 10), -- João entrou na fila da Montanha Russa
-(7, 10);
-
-
-
-
-
-
-
-
-
 
 
 SELECT 
