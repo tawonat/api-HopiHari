@@ -88,12 +88,12 @@ exports.loginUsuario = async (req, res) => {
 //rota pra PUT atualizar o usuário
 exports.atualizarUsuario = async (req, res) => {
     try {
-        const idUsuario = Number(req.params.id);
-
         const resultado = await mysql.execute(
-            `UPDATE users SET first_name = ?, last_name = ?, email = ?, password = ?, birth_date = ?, phone = ? WHERE id = ?;`,
-            [req.body.first_name, req.body.last_name, req.body.email, req.body.password, req.body.birth_date, req.body.phone, idUsuario]
-        );
+            `UPDATE users 
+             SET first_name = ?, last_name = ?, email = ?, birth_date = ?, phone = ? 
+             WHERE id = ?;`,
+            [req.body.first_name, req.body.last_name, req.body.email, req.body.birth_date, req.body.phone, req.params.id]
+        )
         return res.status(201).send({ "Mensagem": "Usuário atualizado com sucesso!", "Resultado": resultado });
     } catch (error) {
         return res.status(500).send({"Mensagem": error});
